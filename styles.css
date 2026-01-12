@@ -574,11 +574,12 @@ img {
 .section-title {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
     position: relative;
     display: inline-block;
 }
 
+/* Removed underline to match reference design
 .section--light .section-title::after {
     content: '';
     position: absolute;
@@ -588,6 +589,7 @@ img {
     height: 4px;
     background: var(--color-accent);
 }
+*/
 
 .section-badge {
     display: inline-block;
@@ -599,7 +601,7 @@ img {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: var(--spacing-lg);
+    margin-top: var(--spacing-sm);
 }
 
 .section-header--dark .section-title {
