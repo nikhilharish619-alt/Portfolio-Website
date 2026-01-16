@@ -46,9 +46,9 @@ function handleHeaderScroll() {
     const currentScroll = window.scrollY;
 
     if (currentScroll > 100) {
-        header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.3)';
+        header.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.1)';
     } else {
-        header.style.boxShadow = 'none';
+        header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.05)';
     }
 
     lastScroll = currentScroll;
@@ -82,25 +82,115 @@ skillTabs.forEach(tab => {
     });
 });
 
+// ===== DASHBOARD TILE TOGGLE =====
+const dashboardTiles = document.querySelectorAll('.dashboard-tile');
+const dashboardIframe = document.getElementById('dashboard-iframe');
+const dashboardViewerTitle = document.querySelector('.dashboard-viewer-title');
+const dashboardExternalLink = document.querySelector('.dashboard-external-link');
+
+dashboardTiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+        // Remove active class from all tiles
+        dashboardTiles.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tile
+        tile.classList.add('active');
+
+        // Get the dashboard URL from data attribute
+        const dashboardUrl = tile.dataset.url;
+        const dashboardTitle = tile.querySelector('h3').textContent;
+
+        // Update iframe source
+        if (dashboardIframe) {
+            dashboardIframe.src = dashboardUrl;
+        }
+
+        // Update viewer title
+        if (dashboardViewerTitle) {
+            dashboardViewerTitle.textContent = dashboardTitle;
+        }
+
+        // Update external link
+        if (dashboardExternalLink) {
+            dashboardExternalLink.href = dashboardUrl;
+        }
+    });
+});
+
+// ===== CERTIFICATION SELECTION =====
+const certTiles = document.querySelectorAll('.cert-tile');
+const certDisplayImage = document.getElementById('cert-display-image');
+const certViewerTitle = document.querySelector('.cert-viewer-title');
+const certDescription = document.getElementById('cert-description');
+const certSkillsContainer = document.getElementById('cert-skills');
+
+certTiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+        // Remove active class from all tiles
+        certTiles.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked tile
+        tile.classList.add('active');
+
+        // Get data from attributes
+        const imageSrc = tile.dataset.image;
+        const title = tile.dataset.title;
+        const desc = tile.dataset.desc;
+        const skillsString = tile.dataset.skills;
+
+        // Update viewer with animation
+        if (certDisplayImage) {
+            certDisplayImage.style.opacity = '0';
+            certDisplayImage.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                certDisplayImage.src = imageSrc;
+                certDisplayImage.style.opacity = '1';
+                certDisplayImage.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        if (certViewerTitle) certViewerTitle.textContent = title;
+        if (certDescription) certDescription.textContent = desc;
+
+        // Update skills
+        if (certSkillsContainer && skillsString) {
+            const skills = skillsString.split(',').map(s => s.trim());
+            certSkillsContainer.innerHTML = skills.map(skill => `<span>${skill}</span>`).join('');
+        }
+    });
+});
+
 // ===== SCROLL REVEAL ANIMATION =====
 function revealOnScroll() {
-    const reveals = document.querySelectorAll('.service-card, .project-card, .skill-item, .education-card, .cert-item, .contact-card, .stat-item');
     const windowHeight = window.innerHeight;
+    const revealPoint = 100;
 
-    reveals.forEach((element, index) => {
-        const elementTop = element.getBoundingClientRect().top;
-        const revealPoint = 100;
+    // Group elements by type for independent stagger delays
+    const elementTypes = [
+        '.service-card',
+        '.project-card',
+        '.skill-item',
+        '.education-card',
+        '.cert-tile',
+        '.contact-card',
+        '.stat-item'
+    ];
 
-        if (elementTop < windowHeight - revealPoint) {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-            element.style.transitionDelay = `${index * 0.05}s`;
-        }
+    elementTypes.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach((element, index) => {
+            const elementTop = element.getBoundingClientRect().top;
+
+            if (elementTop < windowHeight - revealPoint) {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+                element.style.transitionDelay = `${index * 0.05}s`;
+            }
+        });
     });
 }
 
 // Set initial state for reveal elements
-document.querySelectorAll('.service-card, .project-card, .skill-item, .contact-card').forEach(el => {
+document.querySelectorAll('.service-card, .project-card, .skill-item, .contact-card, .cert-tile').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
     el.style.transition = 'all 0.6s ease';
